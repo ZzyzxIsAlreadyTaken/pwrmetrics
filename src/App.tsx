@@ -123,26 +123,26 @@ function StrengthCalculator() {
 }
 
 function App() {
-  const [tab, setTab] = useState("pace");
+  const [tab, setTab] = useState("strength");
 
   return (
     <div>
       <div className="flex justify-center mb-8 gap-2">
         <button
-          className={`$${
-            tab === "pace"
+          className={`${
+            tab === "something"
               ? "bg-blue-600 text-white font-semibold"
-              : "bg-blue-50 text-gray-900"
+              : "bg-gray-50 text-gray-900"
           } rounded-t-2xl px-8 py-2 text-base transition-colors`}
-          onClick={() => setTab("pace")}
+          onClick={() => setTab("something")}
         >
-          Pace Calculator
+          Something Calculator
         </button>
         <button
-          className={`$${
+          className={`${
             tab === "strength"
               ? "bg-blue-600 text-white font-semibold"
-              : "bg-blue-50 text-gray-900"
+              : "bg-gray-50 text-gray-900"
           } rounded-t-2xl px-8 py-2 text-base transition-colors`}
           onClick={() => setTab("strength")}
         >
@@ -150,9 +150,9 @@ function App() {
         </button>
       </div>
       <div className="flex justify-center">
-        {tab === "pace" && (
+        {tab === "something" && (
           <div className="bg-white rounded-2xl shadow-lg p-12 min-w-[350px] min-h-[300px] flex items-center justify-center text-lg text-gray-400">
-            Pace Calculator coming soon...
+            Something Calculator coming soon...
           </div>
         )}
         {tab === "strength" && <StrengthCalculator />}
