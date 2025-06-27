@@ -42,7 +42,7 @@ function StrengthCalculator() {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 min-w-[350px] max-w-[420px] mx-auto">
       <h2 className="text-xl font-bold text-blue-600 mb-2">
-        Strength Calculator
+        One-Rep Max Calculator
       </h2>
       <div className="bg-blue-50 rounded-lg px-4 py-3 mb-6 text-blue-600 text-base">
         Estimate the max weight you could lift for different reps, based on your
@@ -146,7 +146,7 @@ function App() {
           } rounded-t-2xl px-8 py-2 text-base transition-colors`}
           onClick={() => setTab("strength")}
         >
-          Strength Calculator
+          One-Rep Max Calculator
         </button>
       </div>
       <div className="flex justify-center">
