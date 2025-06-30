@@ -1,5 +1,7 @@
 import { useState } from "react";
-import StrengthCalculator from "./components/StrengthCalculator";
+import StrengthCalculator, {
+  STRENGTH_COLOR,
+} from "./components/StrengthCalculator";
 import Header from "./components/Header";
 import TabBar from "./components/TabBar";
 
@@ -7,12 +9,30 @@ function App() {
   const [tab, setTab] = useState("strength");
   const [unit, setUnit] = useState<"metric" | "imperial">("metric");
 
-  const tabs = [{ key: "strength", label: "One-Rep Max Calculator" }];
+  const tabs = [
+    {
+      key: "strength",
+      label: "One-Rep Max Calculator",
+      activeColor: STRENGTH_COLOR,
+    },
+    {
+      key: "something",
+      label: "Something Calculator",
+      activeColor: "bg-blue-600",
+    },
+  ];
 
   return (
     <div>
       <Header unit={unit} onUnitChange={setUnit} />
-      <TabBar tabs={tabs} activeTab={tab} onTabChange={setTab} />
+      <TabBar
+        tabs={tabs}
+        activeTab={tab}
+        onTabChange={setTab}
+        activeColor={
+          tabs.find((t) => t.key === tab)?.activeColor || STRENGTH_COLOR
+        }
+      />
       <div className="flex justify-center">
         {tab === "strength" && <StrengthCalculator unit={unit} />}
         {tab === "something" && (

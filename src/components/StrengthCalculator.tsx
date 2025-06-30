@@ -6,6 +6,8 @@ interface StrengthCalculatorProps {
 
 const KG_TO_LB = 2.20462;
 
+export const STRENGTH_COLOR = "bg-red-600";
+
 function StrengthCalculator({ unit }: StrengthCalculatorProps) {
   const [weight, setWeight] = React.useState(0); // always store as kg internally
   const [reps, setReps] = React.useState(1);
@@ -101,9 +103,6 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
         <div>
           <div className="text-2xl font-bold text-white leading-tight">
             One-Rep Max Calculator
-          </div>
-          <div className="text-lg text-white text-opacity-80 mt-1">
-            Estimate your one-rep max and more
           </div>
         </div>
       </div>
