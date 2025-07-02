@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import Tooltip from "./Tooltip";
 
 interface StrengthCalculatorProps {
   unit: "metric" | "imperial";
@@ -35,31 +36,45 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
   }, [unit]);
 
   // Epley, Brzycki, Lombardi, O'Conner, Wathan formulas
-  const formulas = [
+  // Valid rep ranges (approximate):
+  // Epley: 1-10, Brzycki: 1-10, Lombardi: 1-12, O'Conner: 1-10, Wathan: 1-10
+  const formulaMeta = [
     {
       name: "Epley",
       calc1RM: (w: number, r: number) => w * (1 + r / 30),
       from1RM: (rm: number, r: number) => rm / (1 + r / 30),
+      min: 1,
+      max: 10,
     },
     {
       name: "Brzycki",
       calc1RM: (w: number, r: number) => (w * 36) / (37 - r),
       from1RM: (rm: number, r: number) => (rm * (37 - r)) / 36,
+      min: 1,
+      max: 10,
     },
     {
       name: "Lombardi",
       calc1RM: (w: number, r: number) => w * Math.pow(r, 0.1),
       from1RM: (rm: number, r: number) => rm / Math.pow(r, 0.1),
+      min: 1,
+      max: 12,
     },
     {
       name: "O'Conner",
       calc1RM: (w: number, r: number) => w * (1 + 0.025 * r),
       from1RM: (rm: number, r: number) => rm / (1 + 0.025 * r),
+      min: 1,
+      max: 10,
     },
     {
       name: "Wathan",
-      calc1RM: (w: number, r: number) => (w * 48.8) / (53.8 - 0.201 * r),
-      from1RM: (rm: number, r: number) => (rm * (53.8 - 0.201 * r)) / 48.8,
+      calc1RM: (w: number, r: number) =>
+        (100 * w) / (48.8 + 53.8 * Math.exp(-0.075 * r)),
+      from1RM: (rm: number, r: number) =>
+        (rm * (48.8 + 53.8 * Math.exp(-0.075 * r))) / 100,
+      min: 1,
+      max: 10,
     },
   ];
 
@@ -73,8 +88,8 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
   // Calculate 1RM for each formula (in kg)
   const oneRMs =
     weightValid && repsValid
-      ? formulas.map((f) => f.calc1RM(weight, reps))
-      : Array(formulas.length).fill(undefined);
+      ? formulaMeta.map((f) => f.calc1RM(weight, reps))
+      : Array(formulaMeta.length).fill(undefined);
 
   // Display results in selected unit
   function display(val: number | undefined) {
@@ -85,6 +100,27 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
   // Only show up to 12 rows, but allow scrolling if more
   const visibleRows = probableReps; // show all rows up to reps
   const showScroll = repsValid && reps > maxRows;
+
+  // Grouped out-of-range warnings by formula
+  const groupedWarnings = formulaMeta
+    .map((f) => {
+      const maxRep = Math.max(...visibleRows);
+      if (maxRep > f.max) {
+        return `${f.name} formula may be inaccurate for reps above ${f.max}.`;
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  // Add tooltips for each formula
+  const formulaTooltips: Record<string, string> = {
+    Epley: "~10 reps\nLinear formula, overestimates past 10 reps quickly",
+    Brzycki: "~10 reps\nBecomes unreliable after 10, very conservative",
+    "O'Conner": "~10 reps\nSimilar to Epley, slightly less aggressive",
+    Wathan: "~10 reps\nBest for 1–10 reps, then underestimates",
+    Lombardi:
+      "20+ reps\nOnly one that scales well into endurance ranges (but less precise)",
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl mx-auto sm:min-w-[500px]">
@@ -146,12 +182,30 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
                   <th className="bg-red-50 text-red-700 font-semibold py-2 px-1">
                     Reps
                   </th>
-                  {formulas.map((f) => (
+                  {formulaMeta.map((f, i) => (
                     <th
                       key={f.name}
                       className="bg-red-50 text-red-700 font-semibold py-2 px-1"
                     >
-                      {f.name}
+                      <Tooltip
+                        content={formulaTooltips[f.name] || ""}
+                        align={
+                          i === 0
+                            ? "left"
+                            : i === formulaMeta.length - 1
+                            ? "right"
+                            : "center"
+                        }
+                      >
+                        <span
+                          style={{
+                            cursor: "help",
+                            borderBottom: "1px dotted #b91c1c",
+                          }}
+                        >
+                          {f.name}
+                        </span>
+                      </Tooltip>
                     </th>
                   ))}
                 </tr>
@@ -167,7 +221,7 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
                     <td className="py-1 px-1 font-medium text-gray-800 text-center">
                       {r}
                     </td>
-                    {formulas.map((f, i) => (
+                    {formulaMeta.map((f, i) => (
                       <td
                         key={f.name}
                         className="py-1 px-1 text-center text-gray-900"
@@ -190,6 +244,15 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
           <div className="text-xs text-gray-500 mt-2 text-right">
             All calculations are approximate. 1 kg = 2.20462 lb
           </div>
+          {groupedWarnings.length > 0 && (
+            <div className="text-xs text-red-500 mt-2">
+              <b>Note:</b> Some formulas may be inaccurate for high rep ranges.
+              <br />
+              {groupedWarnings.map((msg) => (
+                <div key={msg}>{msg}</div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
