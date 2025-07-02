@@ -9,44 +9,30 @@ const KG_TO_LB = 2.20462;
 export const STRENGTH_COLOR = "bg-red-600";
 
 function StrengthCalculator({ unit }: StrengthCalculatorProps) {
-  const [weight, setWeight] = React.useState(0); // always store as kg internally
-  const [reps, setReps] = React.useState(1);
-  const [inputValue, setInputValue] = React.useState(0); // what user sees in the input
+  // Use string state for inputs
+  const [weightInput, setWeightInput] = React.useState("");
+  const [repsInput, setRepsInput] = React.useState("");
   const [lastUnit, setLastUnit] = React.useState(unit);
 
-  // Update inputValue when unit or weight changes
+  // Convert input to numbers for calculations
+  const weight = parseFloat(weightInput);
+  const reps = parseInt(repsInput, 10);
+  const weightValid = !isNaN(weight) && weight > 0;
+  const repsValid = !isNaN(reps) && reps > 0;
+
+  // Update input values when unit changes
   useEffect(() => {
     if (unit === lastUnit) return;
-    // Convert input value to new unit
-    if (unit === "imperial") {
-      setInputValue(Number((weight * KG_TO_LB).toFixed(2)));
-    } else {
-      setInputValue(Number((weight / KG_TO_LB).toFixed(2)));
+    if (weightValid) {
+      if (unit === "imperial") {
+        setWeightInput((weight * KG_TO_LB).toFixed(2));
+      } else {
+        setWeightInput((weight / KG_TO_LB).toFixed(2));
+      }
     }
     setLastUnit(unit);
     // eslint-disable-next-line
   }, [unit]);
-
-  // Keep inputValue in sync with weight if unit doesn't change
-  useEffect(() => {
-    if (unit === "imperial") {
-      setInputValue(Number((weight * KG_TO_LB).toFixed(2)));
-    } else {
-      setInputValue(Number(weight.toFixed(2)));
-    }
-    // eslint-disable-next-line
-  }, [weight]);
-
-  // Handle input change
-  function handleWeightChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const val = Number(e.target.value);
-    setInputValue(val);
-    if (unit === "imperial") {
-      setWeight(Number((val / KG_TO_LB).toFixed(4)));
-    } else {
-      setWeight(val);
-    }
-  }
 
   // Epley, Brzycki, Lombardi, O'Conner, Wathan formulas
   const formulas = [
@@ -80,21 +66,25 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
   // Probable reps list (1-12 or up to reps if reps > 12)
   const maxRows = 12;
   const probableReps = Array.from(
-    { length: Math.max(maxRows, reps) },
+    { length: Math.max(maxRows, repsValid ? reps : 1) },
     (_, i) => i + 1
   );
 
   // Calculate 1RM for each formula (in kg)
-  const oneRMs = formulas.map((f) => f.calc1RM(weight, reps));
+  const oneRMs =
+    weightValid && repsValid
+      ? formulas.map((f) => f.calc1RM(weight, reps))
+      : Array(formulas.length).fill(undefined);
 
   // Display results in selected unit
-  function display(val: number) {
+  function display(val: number | undefined) {
+    if (typeof val !== "number" || isNaN(val)) return "-";
     return unit === "imperial" ? (val * KG_TO_LB).toFixed(1) : val.toFixed(1);
   }
 
   // Only show up to 12 rows, but allow scrolling if more
   const visibleRows = probableReps; // show all rows up to reps
-  const showScroll = reps > maxRows;
+  const showScroll = repsValid && reps > maxRows;
 
   return (
     <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl mx-auto sm:min-w-[500px]">
@@ -112,7 +102,7 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
           Estimate the max weight you could lift for different reps, based on
           your input.
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+        <div className="flex flex-row gap-4 justify-center mb-6">
           <div className="flex flex-col items-start">
             <label
               className="text-red-700 font-medium text-sm mb-1 ml-1"
@@ -124,8 +114,8 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
               id="weight-input"
               type="number"
               min={1}
-              value={inputValue}
-              onChange={handleWeightChange}
+              value={weightInput}
+              onChange={(e) => setWeightInput(e.target.value)}
               placeholder={unit === "imperial" ? "Weight (lb)" : "Weight (kg)"}
               className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-24 sm:w-28"
             />
@@ -141,8 +131,8 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
               id="reps-input"
               type="number"
               min={1}
-              value={reps}
-              onChange={(e) => setReps(Number(e.target.value))}
+              value={repsInput}
+              onChange={(e) => setRepsInput(e.target.value)}
               placeholder="Reps"
               className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-24 sm:w-28"
             />
@@ -170,7 +160,9 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
                 {visibleRows.map((r) => (
                   <tr
                     key={r}
-                    className={r === reps ? "bg-red-100" : "hover:bg-red-50"}
+                    className={
+                      repsValid && r === reps ? "bg-red-100" : "hover:bg-red-50"
+                    }
                   >
                     <td className="py-1 px-1 font-medium text-gray-800 text-center">
                       {r}
@@ -180,7 +172,7 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
                         key={f.name}
                         className="py-1 px-1 text-center text-gray-900"
                       >
-                        {weight && reps
+                        {weightValid && repsValid
                           ? display(f.from1RM(oneRMs[i], r))
                           : "-"}
                       </td>
