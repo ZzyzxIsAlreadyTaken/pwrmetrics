@@ -97,9 +97,9 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
   const showScroll = reps > maxRows;
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg min-w-[500px] max-w-2xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl mx-auto sm:min-w-[500px]">
       {/* Header with solid color and icon */}
-      <div className="rounded-t-2xl bg-red-600 px-8 pt-8 pb-6 flex items-center gap-4">
+      <div className="sm:rounded-t-2xl bg-red-600 px-4 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 flex items-center gap-4">
         <div>
           <div className="text-2xl font-bold text-white leading-tight">
             One-Rep Max Calculator
@@ -107,12 +107,12 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
         </div>
       </div>
       {/* End header */}
-      <div className="p-8">
-        <div className="bg-red-50 rounded-lg px-4 py-3 mb-6 text-red-700 text-base">
+      <div className="p-4 sm:p-8">
+        <div className="bg-red-50 rounded-lg px-2 sm:px-4 py-2 sm:py-3 mb-4 sm:mb-6 text-red-700 text-base">
           Estimate the max weight you could lift for different reps, based on
           your input.
         </div>
-        <div className="flex gap-4 justify-center mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
           <div className="flex flex-col items-start">
             <label
               className="text-red-700 font-medium text-sm mb-1 ml-1"
@@ -127,7 +127,7 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
               value={inputValue}
               onChange={handleWeightChange}
               placeholder={unit === "imperial" ? "Weight (lb)" : "Weight (kg)"}
-              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-28"
+              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-24 sm:w-28"
             />
           </div>
           <div className="flex flex-col items-start">
@@ -144,13 +144,13 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
               value={reps}
               onChange={(e) => setReps(Number(e.target.value))}
               placeholder="Reps"
-              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-28"
+              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-24 sm:w-28"
             />
           </div>
         </div>
         <div className="mt-6 max-w-full overflow-x-auto">
           <div className={showScroll ? "max-h-96 overflow-y-auto" : ""}>
-            <table className="w-full border-collapse text-sm min-w-[500px]">
+            <table className="w-full border-collapse text-sm min-w-[350px] sm:min-w-[500px]">
               <thead>
                 <tr>
                   <th className="bg-red-50 text-red-700 font-semibold py-2 px-1">

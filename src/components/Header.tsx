@@ -7,7 +7,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ unit, onUnitChange }) => {
   return (
-    <header className="w-full flex items-center justify-between px-6 py-3 bg-white shadow-sm">
+    <header className="w-full flex items-center justify-between px-2 sm:px-6 py-3 bg-white shadow-sm">
       <div className="flex items-center gap-2">
         {/* Running icon SVG */}
         <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600">
