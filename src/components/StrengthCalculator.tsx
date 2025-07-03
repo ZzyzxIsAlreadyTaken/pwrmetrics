@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Tooltip from "./Tooltip";
+import dumbbellIcon from "../assets/dumbbell.svg";
 
 interface StrengthCalculatorProps {
   unit: "metric" | "imperial";
@@ -126,8 +127,9 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
     <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl mx-auto sm:min-w-[500px]">
       {/* Header with solid color and icon */}
       <div className="sm:rounded-t-2xl bg-red-600 px-4 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 flex items-center gap-4">
+        <img src={dumbbellIcon} alt="Dumbbell" className="w-8 h-8" />
         <div>
-          <div className="text-2xl font-bold text-white leading-tight">
+          <div className="text-xl font-bold text-white leading-tight">
             One-Rep Max Calculator
           </div>
         </div>

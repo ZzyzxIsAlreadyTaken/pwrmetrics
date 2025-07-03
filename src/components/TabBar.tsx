@@ -18,7 +18,7 @@ const TabBar: React.FC<TabBarProps> = ({
   onTabChange,
   activeColor,
 }) => (
-  <div className="flex justify-center mt-8 mb-12">
+  <div className="flex justify-center mt-4 sm:mt-8 mb-6 sm:mb-12">
     <div className="flex bg-gray-100 shadow-sm border border-gray-200 overflow-hidden sm:rounded-xl">
       {tabs.map(({ key, label }, idx) => (
         <button
