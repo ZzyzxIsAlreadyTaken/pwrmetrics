@@ -23,7 +23,7 @@ const TabBar: React.FC<TabBarProps> = ({
       {tabs.map(({ key, label }, idx) => (
         <button
           key={key}
-          className={`px-8 py-2 text-base font-bold transition-all duration-200
+          className={`px-8 py-2 text-base font-semibold transition-all duration-200
             ${
               activeTab === key
                 ? `${activeColor} text-white`

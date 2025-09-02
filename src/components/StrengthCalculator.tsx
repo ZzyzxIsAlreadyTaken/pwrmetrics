@@ -102,17 +102,6 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
   const visibleRows = probableReps; // show all rows up to reps
   const showScroll = repsValid && reps > maxRows;
 
-  // Grouped out-of-range warnings by formula
-  const groupedWarnings = formulaMeta
-    .map((f) => {
-      const maxRep = Math.max(...visibleRows);
-      if (maxRep > f.max) {
-        return `${f.name} formula may be inaccurate for reps above ${f.max}.`;
-      }
-      return null;
-    })
-    .filter(Boolean);
-
   // Add tooltips for each formula
   const formulaTooltips: Record<string, string> = {
     Epley: "~10 reps\nLinear formula, overestimates past 10 reps quickly",
@@ -155,7 +144,7 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
               value={weightInput}
               onChange={(e) => setWeightInput(e.target.value)}
               placeholder={unit === "imperial" ? "Weight (lb)" : "Weight (kg)"}
-              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-24 sm:w-28"
+              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-32 sm:w-40"
             />
           </div>
           <div className="flex flex-col items-start">
@@ -172,7 +161,7 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
               value={repsInput}
               onChange={(e) => setRepsInput(e.target.value)}
               placeholder="Reps"
-              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-24 sm:w-28"
+              className="px-4 py-2 rounded-lg border border-gray-300 focus:border-red-600 focus:outline-none text-base w-32 sm:w-40"
             />
           </div>
         </div>
@@ -246,15 +235,14 @@ function StrengthCalculator({ unit }: StrengthCalculatorProps) {
           <div className="text-xs text-gray-500 mt-2 text-right">
             All calculations are approximate. 1 kg = 2.20462 lb
           </div>
-          {groupedWarnings.length > 0 && (
-            <div className="text-xs text-red-500 mt-2">
-              <b>Note:</b> Some formulas may be inaccurate for high rep ranges.
-              <br />
-              {groupedWarnings.map((msg) => (
-                <div key={msg}>{msg}</div>
-              ))}
-            </div>
-          )}
+
+          <div className="text-xs text-red-500 mt-2">
+            <b>Note:</b> Some formulas may be inaccurate for high rep ranges.
+            <br />
+            Epley, Brzycki, O'Conner, and Wathan are all less accurate for high
+            rep ranges. Lombardi is the only formula that scales well into
+            endurance ranges, but less precise.
+          </div>
         </div>
       </div>
     </div>

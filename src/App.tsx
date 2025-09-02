@@ -4,6 +4,7 @@ import StrengthCalculator, {
 } from "./components/StrengthCalculator";
 import Header from "./components/Header";
 import TabBar from "./components/TabBar";
+import LbskgConversion from "./components/lbskgConversion";
 
 function App() {
   const [tab, setTab] = useState("strength");
@@ -16,14 +17,14 @@ function App() {
       activeColor: STRENGTH_COLOR,
     },
     {
-      key: "something",
-      label: "Something Calculator",
-      activeColor: "bg-blue-600",
+      key: "conversion",
+      label: "lbs/kg Conversion",
+      activeColor: "bg-green-600",
     },
   ];
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <Header unit={unit} onUnitChange={setUnit} />
       <TabBar
         tabs={tabs}
@@ -35,11 +36,7 @@ function App() {
       />
       <div className="flex justify-center">
         {tab === "strength" && <StrengthCalculator unit={unit} />}
-        {tab === "something" && (
-          <div className="bg-white rounded-2xl shadow-lg p-12 min-w-[350px] min-h-[300px] flex items-center justify-center text-lg text-gray-400">
-            Something Calculator coming soon...
-          </div>
-        )}
+        {tab === "conversion" && <LbskgConversion />}
       </div>
     </div>
   );
